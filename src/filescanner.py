@@ -53,7 +53,7 @@ class FileFilter:
 
     @classmethod
     def get_valid_filetypes(cls):
-        return cls.get_valid_extensions().keys()
+        return list(cls.get_valid_extensions().keys())
 
     @classmethod
     def get_valid_status(cls):
@@ -81,22 +81,22 @@ class FileFilter:
         return False
 
     def has_allowed_status(self, file_):
-        if (self.STARRED in self.allowed_status and 
+        if (self.STARRED in self.allowed_status and
             file_.is_starred()):
             return True
 
-        if (self.UNSTARRED in self.allowed_status and 
+        if (self.UNSTARRED in self.allowed_status and
             not file_.is_starred()):
             return True
 
         return False
 
     def matches_pattern(self, filename):
-        return (not self.pattern or not re.search(self.pattern.lower(), 
+        return (not self.pattern or not re.search(self.pattern.lower(),
                                                   filename.lower()) is None)
 
     def allowed(self, file_):
-        return (self.has_allowed_ext(file_.get_filename()) and 
+        return (self.has_allowed_ext(file_.get_filename()) and
                 self.has_allowed_status(file_) and
                 self.matches_pattern(file_.get_filename()))
 
@@ -119,7 +119,7 @@ class FileScanner:
                 dirs.append(entry)
 
         return sorted(dirs)
-                
+
     @cached(cache)
     def get_files_from_dir(self, directory):
         files = []
@@ -141,7 +141,7 @@ class FileScanner:
             for arg in args:
                 for dirpath, dirnames, filenames in os.walk(arg):
                     files.extend(self.get_files_from_dir(dirpath))
-        elif len(args) == 1: 
+        elif len(args) == 1:
             if os.path.isdir(args[0]):
                 files = self.get_files_from_dir(args[0])
             else:

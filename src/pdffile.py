@@ -19,14 +19,14 @@ class PDFFile(ImageFile):
     def get_metadata(self):
         info = [("Property", "Value")]
         output = execute(["pdfinfo", self.get_filename()], check_retcode=False)
-        for line in filter(lambda x: x, output.split("\n")):
-            tokens = map(string.strip, line.split(":"))
+        for line in [x for x in output.split("\n") if x]:
+            tokens = list(map(string.strip, line.split(":")))
             info.append((tokens[0], string.join(tokens[1:], "")))
         return info
 
     @cached()
     def get_pages(self):
-        try: 
+        try:
             return int(dict(self.get_metadata()).get("Pages", "0"))
         except KeyError:
             return 0
@@ -34,8 +34,8 @@ class PDFFile(ImageFile):
     @cached(pixbuf_cache)
     def get_pixbuf(self):
         tmp_root = os.path.join(tempfile.gettempdir(), "%s" % self.get_basename())
-        execute(["pdfimages", "-f", "1", "-l", "1", "-j", 
-                 self.get_filename(), 
+        execute(["pdfimages", "-f", "1", "-l", "1", "-j",
+                 self.get_filename(),
                  tmp_root])
 
         for ext in ["jpg", "pbm", "ppm"]:
@@ -48,7 +48,7 @@ class PDFFile(ImageFile):
             except:
                 continue
 
-        print "Warning: unable to preview PDF file '%s'" % self.get_basename()
+        print("Warning: unable to preview PDF file '%s'" % self.get_basename())
         return GTKIconImage(gtk.STOCK_MISSING_IMAGE, 256).get_pixbuf()
 
     def get_sha1(self):
@@ -67,8 +67,8 @@ class PDFFile(ImageFile):
                 yield None
         except pexpect.EOF:
             pass
-        except Exception, e:
-            print "Warning:", e
+        except Exception as e:
+            print("Warning:", e)
 
     def can_be_extracted(self):
         return True
@@ -77,7 +77,7 @@ class PDFGenerator:
     def generate(self, files, output):
         try:
             child = pexpect.spawn("convert", ["-verbose"] +
-                                              files + 
+                                              files +
                                               [output])
             while True:
                 try:
@@ -87,8 +87,8 @@ class PDFGenerator:
                 yield None
         except pexpect.EOF:
             pass
-        except Exception, e:
-            print "Warning:", e
+        except Exception as e:
+            print("Warning:", e)
 
     def get_args(self):
         return []

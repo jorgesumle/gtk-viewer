@@ -15,7 +15,7 @@ class ArchiveFile(ImageFile):
     zip_extensions = ["zip", "cbz"]
     rar_extensions = ["rar", "cbr"]
 
-    valid_extensions = (zip_extensions + 
+    valid_extensions = (zip_extensions +
                         rar_extensions)
 
     def __init__(self, filename):
@@ -62,10 +62,10 @@ class ZIPFile:
         output = execute(["unzip", "-l", self.filename], check_retcode=False)
         lines = output.split("\n")
         for line in lines[3:-3]:
-            tokens = map(string.strip, filter(lambda x: x, line.split(" ")))
-            ret.append((string.join(tokens[3:], " "), 
-                        Size(int(tokens[0])), 
-                        tokens[1], 
+            tokens = list(map(string.strip, [x for x in line.split(" ") if x]))
+            ret.append((string.join(tokens[3:], " "),
+                        Size(int(tokens[0])),
+                        tokens[1],
                         tokens[2]))
         return ret
 
@@ -80,8 +80,8 @@ class ZIPFile:
                 yield None
         except pexpect.EOF:
             pass
-        except Exception, e:
-            print "Warning:", e
+        except Exception as e:
+            print("Warning:", e)
 
 class RARFile:
     def __init__(self, filename):
@@ -96,7 +96,7 @@ class RARFile:
             # 0     1   2      3     4    5    6    7   8    9
             # Name Size Packed Ratio Date Time Attr CRC Meth Ver
             #      -9   -8     -7    -6   -5   -4   -3  -2   -1
-            tokens = map(string.strip, filter(lambda x: x, line.split(" ")))
+            tokens = list(map(string.strip, [x for x in line.split(" ") if x]))
             ret.append((string.join(tokens[0:-9], " "),
                         Size(int(tokens[-9])),
                         Size(int(tokens[-8])),
@@ -119,8 +119,8 @@ class RARFile:
                 yield None
         except pexpect.EOF:
             pass
-        except Exception, e:
-            print "Warning:", e
+        except Exception as e:
+            print("Warning:", e)
         finally:
             os.chdir(cwd)
 
@@ -131,8 +131,8 @@ class ArchiveGenerator:
             for index, file_ in enumerate(files):
                 output_.write(file_, os.path.basename(file_))
                 yield float(index+1) / len(files)
-        except Exception, e:
-            print "Warning:", e
+        except Exception as e:
+            print("Warning:", e)
 
     def get_args(self):
         return []

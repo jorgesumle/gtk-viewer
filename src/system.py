@@ -12,7 +12,7 @@ def execute(args, check_retcode=True):
         raise Exception(str(args) + " failed!")
     return stdout + stderr
 
-### Multi-platform functions:        
+### Multi-platform functions:
 def os_switch(functions):
     os_name = os.uname()[0]
 
@@ -77,9 +77,9 @@ def untrash_linux(filename):
     trash_dir = os.getenv("HOME") + "/.local/share/Trash"
     info_dir = trash_dir + "/info"
     files_dir = trash_dir + "/files"
-    
+
     info_files = glob.glob(info_dir + "/*")
-    
+
     for info_file in info_files:
         with open(info_file, "r") as info:
             lines = info.readlines()
@@ -92,6 +92,6 @@ def untrash_linux(filename):
                     os.unlink(info_file)
                     shutil.move(trashed_file, filename)
                     return
-    
+
     raise Exception("Couldn't find '%s' in trash" % filename)
 

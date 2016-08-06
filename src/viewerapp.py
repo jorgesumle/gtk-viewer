@@ -10,9 +10,9 @@ import gtk
 from imagefile import Size, GTKIconImage
 from filemanager import Action, FileManager
 from gallery import GalleryViewer
-from chooser import (OpenDialog, BasedirSelectorDialog, TargetSelectorDialog, 
+from chooser import (OpenDialog, BasedirSelectorDialog, TargetSelectorDialog,
                      RenameDialog, DirectorySelectorDialog, OutputDialog)
-from dialogs import (InfoDialog, ErrorDialog, AboutDialog, TextEntryDialog, 
+from dialogs import (InfoDialog, ErrorDialog, AboutDialog, TextEntryDialog,
                      QuestionDialog, ProgressBarDialog, TabbedInfoDialog)
 from imageviewer import ImageViewer, ThumbnailViewer
 from thumbnail import DirectoryThumbnail
@@ -62,9 +62,9 @@ class WidgetManager:
         self.apply_blocked(key, lambda widget: widget.set_active(value))
 
 class AutoScrolledWindow:
-    def __init__(self, child, bg_color, on_special_drag_left, 
-                                        on_special_drag_right, 
-                                        on_scroll_event, 
+    def __init__(self, child, bg_color, on_special_drag_left,
+                                        on_special_drag_right,
+                                        on_scroll_event,
                                         on_size_allocate):
         self.scrolled = gtk.ScrolledWindow()
         self.scrolled.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
@@ -81,11 +81,11 @@ class AutoScrolledWindow:
         viewport.connect("button-release-event", self.on_button_release_event)
         viewport.connect("motion-notify-event", self.on_motion_notify_event)
 
-        viewport.set_events(gtk.gdk.EXPOSURE_MASK | 
-                            gtk.gdk.LEAVE_NOTIFY_MASK | 
-                            gtk.gdk.BUTTON_PRESS_MASK | 
-                            gtk.gdk.BUTTON_RELEASE_MASK | 
-                            gtk.gdk.POINTER_MOTION_MASK | 
+        viewport.set_events(gtk.gdk.EXPOSURE_MASK |
+                            gtk.gdk.LEAVE_NOTIFY_MASK |
+                            gtk.gdk.BUTTON_PRESS_MASK |
+                            gtk.gdk.BUTTON_RELEASE_MASK |
+                            gtk.gdk.POINTER_MOTION_MASK |
                             gtk.gdk.POINTER_MOTION_HINT_MASK)
 
         viewport.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse(bg_color))
@@ -121,16 +121,16 @@ class AutoScrolledWindow:
         self.prev_y = event.y_root
 
         x_adj = widget.get_hadjustment()
-        y_adj = widget.get_vadjustment() 
+        y_adj = widget.get_vadjustment()
 
         new_x = x_adj.get_value() + offset_x
         new_y = y_adj.get_value() + offset_y
 
-        if (new_x >= x_adj.get_lower() and 
+        if (new_x >= x_adj.get_lower() and
             new_x <= (x_adj.get_upper() - x_adj.get_page_size())):
             x_adj.set_value(new_x)
 
-        if (new_y >= y_adj.get_lower() and 
+        if (new_y >= y_adj.get_lower() and
             new_y <= (y_adj.get_upper() - y_adj.get_page_size())):
             y_adj.set_value(new_y)
 
@@ -150,7 +150,7 @@ class AutoScrolledWindow:
 
         # calculate the proportional location of the pointer inside the img:
         x_adj = widget.get_hadjustment()
-        y_adj = widget.get_vadjustment() 
+        y_adj = widget.get_vadjustment()
 
         px = (x_adj.get_value() + event_x) / old_size[0]
         py = (y_adj.get_value() + event_y) / old_size[1]
@@ -203,20 +203,20 @@ class WidgetFactory:
 
         for item in menu["items"]:
             # Create menu item depending on type:
-            if item.has_key("menu"):
+            if "menu" in item:
                 mitem = self.get_menu(item["menu"], widget_manager, accel_group)
-            elif item.has_key("text"):
+            elif "text" in item:
                 mitem = gtk.MenuItem(item["text"])
-            elif item.has_key("stock"):
+            elif "stock" in item:
                 mitem = gtk.ImageMenuItem(item["stock"], accel_group)
-            elif item.has_key("separator"):
+            elif "separator" in item:
                 mitem = gtk.SeparatorMenuItem()
-            elif item.has_key("toggle"):
+            elif "toggle" in item:
                 mitem = gtk.CheckMenuItem(item["toggle"])
-                if item.has_key("active") and item["active"]:
+                if "active" in item and item["active"]:
                     mitem.set_active(True)
 
-            if item.has_key("accel"):
+            if "accel" in item:
                 accel = item["accel"]
                 if type(accel) is str:
                     key, mod = gtk.accelerator_parse(item["accel"])
@@ -224,21 +224,21 @@ class WidgetFactory:
                     key, mod = accel
                 mitem.add_accelerator("activate", accel_group, key, mod, gtk.ACCEL_VISIBLE)
 
-            if item.has_key("sensitive"):
+            if "sensitive" in item:
                 mitem.set_sensitive(item["sensitive"])
 
             # Connect handler if available:
-            if item.has_key("handler"):
+            if "handler" in item:
                 handler_id = mitem.connect("activate", item["handler"])
             else:
                 handler_id = None
 
-            if item.has_key("key"):
+            if "key" in item:
                 widget_manager.add_widget(item["key"], mitem, handler_id)
 
             # Add it to the menu:
             gmenu.append(mitem)
-        
+
         return gitem
 
     def get_menu_bar(self, accel_group, widget_manager, menus):
@@ -282,7 +282,7 @@ class Pinbar:
                                          on_button_press_event=self.on_th_press(i),
                                          on_scroll_event=lambda: None)
             tvbox.pack_start(ebox, True, False, 0)
-            
+
             label = gtk.Label()
             label.set_size_request(self.get_thumb_width(default_width), -1)
             self.label_array.append(label)
@@ -363,10 +363,10 @@ class Pinbar:
                 self.set_target(index, thumbnail, dirname)
 
         if self.is_active():
-            DirectorySelectorDialog("Select directory containing categories", 
+            DirectorySelectorDialog("Select directory containing categories",
                                     self.main_app.window,
                                     self.main_app.get_base_dir(),
-                                    self.main_app.last_targets, 
+                                    self.main_app.last_targets,
                                     on_dir_selected).run()
 
     def refresh_buckets(self):
@@ -388,14 +388,14 @@ class Pinbar:
             thumbnail = DirectoryThumbnail(selection)
             self.set_target(index, thumbnail, selection)
 
-        DirectorySelectorDialog("Select target directory for bucket %i" % (index+1), 
+        DirectorySelectorDialog("Select target directory for bucket %i" % (index+1),
                                 self.main_app.window,
                                 self.main_app.get_base_dir(),
-                                self.main_app.last_targets, 
+                                self.main_app.last_targets,
                                 on_dir_selected).run()
 
     def reset_target(self, index):
-        self.set_target(index, GTKIconImage(gtk.STOCK_DIALOG_QUESTION, 128), None) 
+        self.set_target(index, GTKIconImage(gtk.STOCK_DIALOG_QUESTION, 128), None)
 
     def reset_targets(self):
         for i in range(self.THUMB_COUNT):
@@ -453,7 +453,7 @@ class UndoStack:
     def empty(self):
         return not self.stack
 
-    def top(self): 
+    def top(self):
         return self.stack[-1]
 
     def pop(self):
@@ -475,7 +475,7 @@ class ViewerApp:
         self.files_order = None
         self.base_dir = base_dir
         self.last_targets = []
-        self.undo_stack = UndoStack(self.on_undo_stack_push, 
+        self.undo_stack = UndoStack(self.on_undo_stack_push,
                                     self.on_undo_stack_empty)
         self.filter_ = FileFilter()
 
@@ -485,7 +485,7 @@ class ViewerApp:
         factory = WidgetFactory()
         self.widget_manager = WidgetManager()
 
-        self.window = factory.get_window(width=self.DEF_WIDTH, 
+        self.window = factory.get_window(width=self.DEF_WIDTH,
                                          height=self.DEF_HEIGHT,
                                          on_destroy=self.on_destroy,
                                          on_key_press_event=self.on_key_press_event)
@@ -538,7 +538,7 @@ class ViewerApp:
         hbox.pack_start(ebox, False, False, 0)
 
         # Main viewer
-        self.image_viewer = ImageViewer() 
+        self.image_viewer = ImageViewer()
         self.scrolled = AutoScrolledWindow(child=self.image_viewer.get_widget(),
                                            bg_color=self.BG_COLOR,
                                            on_special_drag_left=self.on_viewer_drag_left,
@@ -841,16 +841,16 @@ class ViewerApp:
                              "handler" : pinbar.on_reset},
                             {"separator" : True},
                             {"menu" : {"text" : "Send to",
-                                       "items" : [pinbar_send(0), pinbar_send(1), 
-                                                  pinbar_send(2), pinbar_send(3), 
-                                                  pinbar_send(4), pinbar_send(5), 
-                                                  pinbar_send(6), pinbar_send(7), 
+                                       "items" : [pinbar_send(0), pinbar_send(1),
+                                                  pinbar_send(2), pinbar_send(3),
+                                                  pinbar_send(4), pinbar_send(5),
+                                                  pinbar_send(6), pinbar_send(7),
                                                   pinbar_send(8), pinbar_send(9),]}},
                             {"menu" : {"text" : "Associate",
-                                       "items" : [pinbar_assoc(0), pinbar_assoc(1), 
-                                                  pinbar_assoc(2), pinbar_assoc(3), 
-                                                  pinbar_assoc(4), pinbar_assoc(5), 
-                                                  pinbar_assoc(6), pinbar_assoc(7), 
+                                       "items" : [pinbar_assoc(0), pinbar_assoc(1),
+                                                  pinbar_assoc(2), pinbar_assoc(3),
+                                                  pinbar_assoc(4), pinbar_assoc(5),
+                                                  pinbar_assoc(6), pinbar_assoc(7),
                                                   pinbar_assoc(8), pinbar_assoc(9)]}}]},
                 {"text" : "_Help",
                  "items" : [{"text" : "See commands reference",
@@ -866,7 +866,7 @@ class ViewerApp:
 
         tooltips = gtk.Tooltips()
         toolbar.set_tooltips(True)
-        
+
         button = gtk.ToolButton(gtk.STOCK_OPEN)
         button.connect("clicked", self.on_open_file)
         button.set_tooltip(tooltips, "Open")
@@ -892,7 +892,7 @@ class ViewerApp:
         toolbar.insert(button, -1)
 
         toolbar.insert(gtk.SeparatorToolItem(), -1)
-        
+
         button = gtk.ToggleToolButton(gtk.STOCK_ABOUT)
         handler_id = button.connect("clicked", self.on_toggle_star)
         button.set_tooltip(tooltips, "Star")
@@ -982,7 +982,7 @@ class ViewerApp:
         toolbar.insert(button, -1)
 
         toolbar.insert(gtk.SeparatorToolItem(), -1)
-        
+
         button = gtk.ToolButton(gtk.STOCK_GOTO_FIRST)
         button.connect("clicked", self.on_goto_first)
         button.set_tooltip(tooltips, "Go to first file")
@@ -1019,7 +1019,7 @@ class ViewerApp:
         toolbar.insert(button, -1)
 
         toolbar.insert(gtk.SeparatorToolItem(), -1)
-        
+
         button = gtk.ToggleToolButton(gtk.STOCK_ITALIC)
         handler_id = button.connect("clicked", self.on_sort_by_name)
         button.set_tooltip(tooltips, "Sort by name")
@@ -1084,7 +1084,7 @@ class ViewerApp:
         toolbar.insert(button, -1)
 
         toolbar.insert(gtk.SeparatorToolItem(), -1)
-        
+
         for stock_id, text, key in [(gtk.STOCK_ABOUT, "Starreds", "starred"),
                                     ("unstarred", "Unstarreds", "unstarred")]:
             button = gtk.ToggleToolButton(stock_id)
@@ -1281,7 +1281,7 @@ class ViewerApp:
     def on_undo_stack_empty(self):
         self.widget_manager.get("undo_mitem").set_sensitive(False)
         self.widget_manager.get("undo_button").set_sensitive(False)
-    ## 
+    #
 
     ## Internal helpers
     def update_target(self, target_dir):
@@ -1320,10 +1320,10 @@ class ViewerApp:
 
         # Handle star toggle
         with self.widget_manager.get_blocked("star_toggle") as star_toggle:
-            star_toggle.set_active(current_file.is_starred()) 
+            star_toggle.set_active(current_file.is_starred())
 
         with self.widget_manager.get_blocked("star_button") as star_button:
-            star_button.set_active(current_file.is_starred()) 
+            star_button.set_active(current_file.is_starred())
 
         # Update main viewer and thumbnails
         missing_image = GTKIconImage(gtk.STOCK_MISSING_IMAGE, 128)
@@ -1332,13 +1332,13 @@ class ViewerApp:
         self.th_left.load(missing_image)
         self.th_right.load(missing_image)
         self.loader_left.clear()
-        self.loader_left.push((self.prepare_thumbnail, 
+        self.loader_left.push((self.prepare_thumbnail,
                               (self.th_left, self.file_manager.get_prev_file())))
         self.loader_right.clear()
-        self.loader_right.push((self.prepare_thumbnail, 
+        self.loader_right.push((self.prepare_thumbnail,
                                (self.th_right, self.file_manager.get_next_file())))
         self.main_loader.clear()
-        self.main_loader.push((self.preload_main_viewer, 
+        self.main_loader.push((self.preload_main_viewer,
                                (self.image_viewer, current_file)))
 
         # Handle extract buttons
@@ -1374,7 +1374,7 @@ class ViewerApp:
 
     # This function will just reload the main viewer, after enabling
     # animation for the current file and having loaded the animated
-    # pixbuf in the cache (so the loading operation doesn't block the 
+    # pixbuf in the cache (so the loading operation doesn't block the
     # main thread):
     def load_main_viewer(self, viewer, file_):
         self.fit_viewer(force=True)
@@ -1443,7 +1443,7 @@ class ViewerApp:
 
         inverse_order = self.widget_manager.get("inverted_order_toggle").active
         file_index = "<b><big>%d/%d</big></b> (%d)\n<i>Order:</i> %s %s" % \
-                     (self.file_manager.get_current_index() + 1, 
+                     (self.file_manager.get_current_index() + 1,
                       self.file_manager.get_list_length(),
                       len(files),
                       self.files_order,
@@ -1479,7 +1479,7 @@ class ViewerApp:
                 return
             try:
                 value = func(value)
-            except Exception, e:
+            except Exception as e:
                 ErrorDialog(self.window, "Error: " + str(e)).run()
                 return
             kw_args[key] = value
@@ -1494,7 +1494,7 @@ class ViewerApp:
                 return
             try:
                 ret.append(func(value))
-            except Exception, e:
+            except Exception as e:
                 ErrorDialog(self.window, "Error: " + str(e)).run()
                 return
         return ret
@@ -1537,7 +1537,7 @@ class ViewerApp:
         root_path = os.path.split(os.path.dirname(__file__))[0]
         with open(os.path.join(root_path, "accelerators.txt")) as input_:
             for line in input_.readlines():
-                info.append(map(string.strip, line.split(":")))
+                info.append(list(map(string.strip, line.split(":"))))
 
         dialog = TabbedInfoDialog(self.window, info)
         dialog.show()
@@ -1645,7 +1645,7 @@ class ViewerApp:
             return
         try:
             value = int(value)-1
-        except Exception, e:
+        except Exception as e:
             ErrorDialog(self.window, "Error: " + str(e)).run()
             return
         self.file_manager.go_to(value)
@@ -1664,15 +1664,15 @@ class ViewerApp:
 
     def on_copy_to_target(self, _):
         selector = TargetSelectorDialog(parent=self.window,
-                                        initial_dir=self.get_base_dir(), 
-                                        last_targets=self.last_targets, 
+                                        initial_dir=self.get_base_dir(),
+                                        last_targets=self.last_targets,
                                         callback=self.on_copy_target_selected)
         selector.run()
 
     def on_move_to_target(self, _):
         selector = TargetSelectorDialog(parent=self.window,
-                                        initial_dir=self.get_base_dir(), 
-                                        last_targets=self.last_targets, 
+                                        initial_dir=self.get_base_dir(),
+                                        last_targets=self.last_targets,
                                         callback=self.on_target_selected)
         selector.run()
 
@@ -1688,14 +1688,14 @@ class ViewerApp:
 
     def on_select_base_dir(self, _):
         selector = BasedirSelectorDialog(parent=self.window,
-                                         initial_dir=self.get_base_dir(), 
-                                         last_targets=self.last_targets, 
+                                         initial_dir=self.get_base_dir(),
+                                         last_targets=self.last_targets,
                                          callback=self.on_base_dir_selected)
         selector.run()
 
     def on_gallery_view(self, _):
-        gallery = GalleryViewer(title="", 
-                                parent=self.window, 
+        gallery = GalleryViewer(title="",
+                                parent=self.window,
                                 files=self.file_manager.get_files(),
                                 callback=self.file_manager.go_file)
         gallery.run()
@@ -1752,7 +1752,7 @@ class ViewerApp:
             shutil.rmtree(tmp_dir)
 
     def on_mass_delete(self, _):
-        current, total = (self.file_manager.get_current_index() + 1, 
+        current, total = (self.file_manager.get_current_index() + 1,
                           self.file_manager.get_list_length())
 
         args = [("First file to delete (current: %d)" % current, int, 1),
@@ -1971,30 +1971,29 @@ class ViewerApp:
 
     def on_generate_gif(self, _):
         generator = GIFGenerator()
-        dialog = OutputDialog(self.window, 
-                              lambda filename: self.on_generate_file(generator, 
+        dialog = OutputDialog(self.window,
+                              lambda filename: self.on_generate_file(generator,
                                                                      filename))
         dialog.run()
 
     def on_generate_archive(self, _):
         generator = ArchiveGenerator()
-        dialog = OutputDialog(self.window, 
-                              lambda filename: self.on_generate_file(generator, 
+        dialog = OutputDialog(self.window,
+                              lambda filename: self.on_generate_file(generator,
                                                                      filename))
         dialog.run()
 
     def on_generate_pdf(self, _):
         generator = PDFGenerator()
-        dialog = OutputDialog(self.window, 
-                              lambda filename: self.on_generate_file(generator, 
+        dialog = OutputDialog(self.window,
+                              lambda filename: self.on_generate_file(generator,
                                                                      filename))
         dialog.run()
 
     def on_generate_file(self, generator, output):
         kw_args = self.handle_args(generator.get_args())
 
-        files = map(lambda f: f.get_filename(),
-                    self.file_manager.get_files())
+        files = [f.get_filename() for f in self.file_manager.get_files()]
 
         dialog = ProgressBarDialog(self.window, "Generating file...")
         dialog.show()

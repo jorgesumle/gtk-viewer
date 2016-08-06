@@ -84,7 +84,7 @@ class FileManager:
         self.on_list_modified = on_list_modified
 
     def set_files(self, files):
-        self.filelist.set_files(map(FileFactory.create, files))
+        self.filelist.set_files(list(map(FileFactory.create, files)))
 
     def get_files(self):
         return self.filelist.get_files()
@@ -192,7 +192,7 @@ class FileManager:
         else:
             self.on_dir_changed(os.path.dirname(new_filename))
             self.on_current_eliminated()
-            
+
             def undo_action():
                 self.on_dir_changed(os.path.dirname(new_filename))
                 self.on_dir_changed(orig_dirname)

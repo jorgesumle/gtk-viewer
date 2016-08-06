@@ -29,7 +29,7 @@ class VideoFile(ImageFile):
         info = [("Property", "Value")]
         output = execute(["avconv", "-i", self.get_filename()], check_retcode=False)
         for line in filter(lambda x: x, output.split("\n"))[4:]:
-            tokens = map(string.strip, line.split(":"))
+            tokens = list(map(string.strip, line.split(":")))
             if tokens[0].startswith("Stream"):
                 break # Stop when avconv starts to dump streams metadata
             info.append((tokens[0], string.join(tokens[1:], ":")))
@@ -49,7 +49,7 @@ class VideoFile(ImageFile):
     @cached()
     def get_duration(self):
         metadata = dict(self.get_metadata())
-        if metadata.has_key("Duration"):
+        if "Duration" in metadata:
             return self.parse_duration(metadata["Duration"])
 
         return 0
@@ -64,7 +64,7 @@ class VideoFile(ImageFile):
         try:
             self.extract_frame_at(second_cap, tmp_img)
         except:
-            print "Warning: unable to extract thumbnail from '%s'" % self.get_basename()
+            print("Warning: unable to extract thumbnail from '%s'" % self.get_basename())
             return self.get_empty_pixbuf()
 
         try:
@@ -72,12 +72,12 @@ class VideoFile(ImageFile):
             os.unlink(tmp_img)
             return pixbuf
         except:
-            print "Warning: unable to open", tmp_img
+            print("Warning: unable to open", tmp_img)
             return self.get_empty_pixbuf()
 
     def extract_frame_at(self, second, output):
         execute(["avconv", "-ss", str(second),
-                 "-i", self.get_filename(), 
+                 "-i", self.get_filename(),
                  "-vframes", "1",
                  "-an",
                  output])
@@ -89,32 +89,32 @@ class VideoFile(ImageFile):
 
     def extract_frames(self, offset, rate, count, tmp_dir):
         time_placeholder = "__TIME__"
-        pattern = os.path.join(tmp_dir, "%s-%%06d%s.jpg" % (self.get_basename(), 
+        pattern = os.path.join(tmp_dir, "%s-%%06d%s.jpg" % (self.get_basename(),
                                                             time_placeholder))
 
         # Extract the frames:
         try:
             if not count:
                 count = (self.get_duration()-offset) * rate
-            child = pexpect.spawn("avconv", ["-ss", str(offset), 
-                                             "-i", self.get_filename(), 
-                                             "-r", str(rate), 
-                                             "-qscale", "1", 
+            child = pexpect.spawn("avconv", ["-ss", str(offset),
+                                             "-i", self.get_filename(),
+                                             "-r", str(rate),
+                                             "-qscale", "1",
                                              "-vframes", str(count),
                                              pattern])
             first = True
             while True:
                 child.expect("frame=")
                 if not first:
-                    tokens = filter(lambda x:x, child.before.split(" "))
+                    tokens = [x for x in child.before.split(" ") if x]
                     frame = str(tokens[0])
                     yield float(frame) / count
                 else:
                     first = False
         except pexpect.EOF:
             pass
-        except Exception, e:
-            print "Warning:", e
+        except Exception as e:
+            print("Warning:", e)
 
         # Fill the placeholder in each file with the frame time:
         try:
@@ -130,8 +130,8 @@ class VideoFile(ImageFile):
 
                 os.rename(filename, filename.replace(time_placeholder, "-%s" % position))
                 yield None
-        except Exception, e:
-            print "Warning:", e
+        except Exception as e:
+            print("Warning:", e)
 
     def extract_contents(self, tmp_dir, offset, rate, count):
         return self.extract_frames(offset=offset,

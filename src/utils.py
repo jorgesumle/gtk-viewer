@@ -8,10 +8,10 @@ def trace(prefix, show_ret=False):
         def wrapper(*args):
             signature = "[%s] %s.%s: %s" % (threading.current_thread().getName(),
                                             prefix, func.__name__, args)
-            print signature, "..."
+            print(signature, "...")
             ret = func(*args)
             if show_ret:
-                print signature, "->", ret
+                print(signature, "->", ret)
             return ret
         return wrapper
     return decorator
@@ -45,4 +45,4 @@ class Timer:
 
     def __exit__(self, exc_type, exc_value, tb):
         end = time.time()
-        print "%s took %.2f seconds" % (self.key, end - self.start)
+        print("%s took %.2f seconds" % (self.key, end - self.start))

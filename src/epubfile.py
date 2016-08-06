@@ -22,7 +22,7 @@ class EPUBFile(ImageFile):
             stream = gio.memory_input_stream_new_from_data(cover.read())
             return gtk.gdk.pixbuf_new_from_stream(stream)
         else:
-            print "Warning: unable to preview EPUB file '%s'" % self.get_basename()
+            print("Warning: unable to preview EPUB file '%s'" % self.get_basename())
             return GTKIconImage(gtk.STOCK_MISSING_IMAGE, 256).get_pixbuf()
 
     def get_cover(self):
@@ -36,7 +36,7 @@ class EPUBFile(ImageFile):
             # If succesfull, extract the cover and build the pixbuf:
             if cover_path:
                 return epub.open(cover_path)
-        
+
         return None
 
     def get_cover_from_manifest(self, epub):
@@ -59,9 +59,9 @@ class EPUBFile(ImageFile):
         for item in manifest.getElementsByTagName("item"):
             item_id = item.getAttribute("id")
             item_href = item.getAttribute("href")
-            if (("cover" in item_id or "fcvi" in item_id) and 
+            if (("cover" in item_id or "fcvi" in item_id) and
                 img_ext_regex.match(item_href.lower())):
-                cover_path = os.path.join(os.path.dirname(rootfile_path), 
+                cover_path = os.path.join(os.path.dirname(rootfile_path),
                                           item_href)
                 return cover_path
 

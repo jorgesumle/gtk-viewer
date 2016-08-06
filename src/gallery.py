@@ -35,7 +35,7 @@ class ImageItem(GalleryItem):
 
     def initial_data(self):
         unknown_icon = GTKIconImage(gtk.STOCK_MISSING_IMAGE, self.size)
-        return (unknown_icon.get_pixbuf(), 
+        return (unknown_icon.get_pixbuf(),
                 self.item.get_basename(),
                 self.item.get_filename())
 
@@ -48,7 +48,7 @@ class ImageItem(GalleryItem):
                      self.item.get_dimensions(),
                      self.item.get_filesize()),
                 "%s (%s)" % \
-                    (self.item.get_filename(), 
+                    (self.item.get_filename(),
                      self.item.get_mtime()))
 
     def on_selected(self, gallery):
@@ -76,7 +76,7 @@ class DirectoryItem(GalleryItem):
         gallery.on_dir_selected(self.item)
 
 class SelectorListStoreBuilder:
-    liststore_cache = Cache(shared=True, 
+    liststore_cache = Cache(shared=True,
                             top_cache=FileScanner.cache)
 
     def __init__(self, directory, filter_, thumb_size):
@@ -93,16 +93,16 @@ class SelectorListStoreBuilder:
         scanner = FileScanner()
         dirs = scanner.get_dirs_from_dir(self.directory)
 
-        for dir_ in sorted(dirs, 
-                           key=lambda dir_: os.stat(dir_).st_mtime, 
+        for dir_ in sorted(dirs,
+                           key=lambda dir_: os.stat(dir_).st_mtime,
                            reverse=True):
             if self.filter_ and not self.filter_.lower() in dir_.lower():
                 continue
             yield DirectoryItem(dir_, self.thumb_size/2)
-    
+
         # Now the files:
         files = scanner.get_files_from_dir(self.directory)
-        
+
         file_manager = FileManager()
         file_manager.set_files(files)
         file_manager.sort_by_date(True)
@@ -162,7 +162,7 @@ class GallerySelector:
         self.window.set_modal(True)
         self.window.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
         self.window.set_transient_for(parent)
-        
+
         self.window.connect("key_press_event", self.on_key_press_event)
 
         # Main HBox of the window
@@ -175,27 +175,27 @@ class GallerySelector:
 
         store = gtk.ListStore(gtk.gdk.Pixbuf, str, str)
 
-        store.append((GTKIconImage(gtk.STOCK_HARDDISK, quick_thumb_size).get_pixbuf(), 
+        store.append((GTKIconImage(gtk.STOCK_HARDDISK, quick_thumb_size).get_pixbuf(),
                       "File System", "/"))
 
         home = os.path.realpath(os.path.expanduser("~"))
-        store.append((GTKIconImage(gtk.STOCK_HOME, quick_thumb_size).get_pixbuf(), 
+        store.append((GTKIconImage(gtk.STOCK_HOME, quick_thumb_size).get_pixbuf(),
                       "Home", home))
 
-        for home_dir in ["Downloads", "Documents", "Pictures", 
+        for home_dir in ["Downloads", "Documents", "Pictures",
                          "Videos", "Dropbox", "Torrents"]:
             path = os.path.join(home, home_dir)
             if not os.path.isdir(path):
                 continue
-            thumb = DirectoryThumbnail(path) 
-            store.append((thumb.get_pixbuf_at_size(quick_thumb_size, 
-                                                   quick_thumb_size), 
+            thumb = DirectoryThumbnail(path)
+            store.append((thumb.get_pixbuf_at_size(quick_thumb_size,
+                                                   quick_thumb_size),
                           home_dir, path))
 
         for directory in last_targets:
-            thumb = DirectoryThumbnail(directory) 
-            store.append((thumb.get_pixbuf_at_size(quick_thumb_size, 
-                                                   quick_thumb_size), 
+            thumb = DirectoryThumbnail(directory)
+            store.append((thumb.get_pixbuf_at_size(quick_thumb_size,
+                                                   quick_thumb_size),
                           os.path.basename(directory),
                           directory))
 
@@ -324,12 +324,12 @@ class GallerySelector:
         self.curdir = os.path.realpath(os.path.expanduser(dirname))
         self.last_filter = ""
         self.items = []
-        
+
     def run(self):
         self.window.show_all()
         self.filter_entry.grab_focus()
         self.update_model()
-    
+
     def update_model(self, filter_=""):
         dialog = ProgressBarDialog(self.window, "Loading...")
         dialog.show()
@@ -347,7 +347,7 @@ class GallerySelector:
 
         for index, item in enumerate(builder.items):
             # Schedule an update on this item:
-            self.loader.push((self.update_item_thumbnail, 
+            self.loader.push((self.update_item_thumbnail,
                              (builder.liststore, index, item)))
 
         # Update the items list:
@@ -422,7 +422,7 @@ class GallerySelector:
             entry.set_text(self.curdir)
 
     def on_filter_entry_activate(self, entry):
-        if (not entry.get_text() and 
+        if (not entry.get_text() and
             not self.last_filter):
             self.on_dir_selected_cb(self.curdir, self.recursive_check.get_active())
             self.close()
@@ -447,7 +447,7 @@ class GallerySelector:
         iconview.unselect_all()
 
         item.on_selected(self)
-        
+
     def on_image_selected(self, item):
         if self.dir_selector:
             return
@@ -473,7 +473,7 @@ class GallerySelector:
     def on_ok_clicked(self, button):
         self.on_dir_selected_cb(self.curdir, self.recursive_check.get_active())
         self.close()
-        
+
     def on_cancel_clicked(self, button):
         self.close()
 
@@ -484,7 +484,7 @@ class GallerySelector:
         # was causing a SIGSEGV after the on_cursor_changed handler ran
         # (https://mail.gnome.org/archives/gtk-app-devel-list/2004-September/msg00230.html)
         gobject.idle_add(lambda window: window.destroy(), self.window)
-        
+
 class ViewerListStoreBuilder:
     def __init__(self, files, thumb_size):
         self.files = files
@@ -518,7 +518,7 @@ class GalleryViewer:
         self.window.set_modal(True)
         self.window.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
         self.window.set_transient_for(parent)
-        
+
         self.window.connect("key_press_event", self.on_key_press_event)
 
         # Main HBox of the window
@@ -552,11 +552,11 @@ class GalleryViewer:
         self.loader.start()
         self.files = files
         self.items = []
-        
+
     def run(self):
         self.window.show_all()
         self.update_model()
-    
+
     def update_model(self):
         dialog = ProgressBarDialog(self.window, "Loading...")
         dialog.show()
@@ -574,7 +574,7 @@ class GalleryViewer:
 
         for index, item in enumerate(builder.items):
             # Schedule an update on this item:
-            self.loader.push((self.update_item_thumbnail, 
+            self.loader.push((self.update_item_thumbnail,
                              (builder.liststore, index, item)))
 
         # Update the items list:
@@ -616,7 +616,7 @@ class GalleryViewer:
         iconview.unselect_all()
 
         item.on_selected(self)
-        
+
     def on_image_selected(self, item):
         self.callback(item.get_filename())
         self.close()
@@ -625,4 +625,4 @@ class GalleryViewer:
         self.loader.stop()
         self.loader.join()
         gobject.idle_add(lambda window: window.destroy(), self.window)
-        
+

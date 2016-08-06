@@ -42,8 +42,8 @@ class TabbedInfoDialog:
 
 class InfoDialog:
     def __init__(self, parent, message):
-        self.md = gtk.MessageDialog(parent, 
-                                    gtk.DIALOG_DESTROY_WITH_PARENT, 
+        self.md = gtk.MessageDialog(parent,
+                                    gtk.DIALOG_DESTROY_WITH_PARENT,
                                     gtk.MESSAGE_INFO,
                                     gtk.BUTTONS_OK,
                                     message)
@@ -54,8 +54,8 @@ class InfoDialog:
 
 class ErrorDialog:
     def __init__(self, parent, message):
-        self.md = gtk.MessageDialog(parent, 
-                                    gtk.DIALOG_DESTROY_WITH_PARENT, 
+        self.md = gtk.MessageDialog(parent,
+                                    gtk.DIALOG_DESTROY_WITH_PARENT,
                                     gtk.MESSAGE_ERROR,
                                     gtk.BUTTONS_OK,
                                     message)
@@ -66,8 +66,8 @@ class ErrorDialog:
 
 class QuestionDialog:
     def __init__(self, parent, question):
-        self.md = gtk.MessageDialog(parent, 
-                                    gtk.DIALOG_DESTROY_WITH_PARENT, 
+        self.md = gtk.MessageDialog(parent,
+                                    gtk.DIALOG_DESTROY_WITH_PARENT,
                                     gtk.MESSAGE_QUESTION,
                                     gtk.BUTTONS_YES_NO,
                                     question)
@@ -81,8 +81,8 @@ class TextEntryDialog:
     def __init__(self, parent, text, default="", callback=None):
         self.callback = callback
 
-        self.window = gtk.Dialog(title="", 
-                                 parent=parent, 
+        self.window = gtk.Dialog(title="",
+                                 parent=parent,
                                  flags=gtk.DIALOG_MODAL)
 
         label = gtk.Label()
@@ -118,8 +118,8 @@ class NewFolderDialog(TextEntryDialog):
 
 class ProgressBarDialog:
     def __init__(self, parent, text):
-        self.window = gtk.Dialog(title="Progress", 
-                                 parent=parent, 
+        self.window = gtk.Dialog(title="Progress",
+                                 parent=parent,
                                  flags=gtk.DIALOG_MODAL)
 
         self.label = gtk.Label()
@@ -154,7 +154,7 @@ class ProgressBarDialog:
 
         if fraction < 0.0: fraction = 0.0
         if fraction > 1.0: fraction = 1.0
-            
+
         remaining = "Unknown"
         delta = time.time() - self.start
         if delta:

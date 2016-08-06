@@ -47,8 +47,8 @@ class GIFFile(ImageFile):
             tmp_root = os.path.join(tmp_dir, "%s_%%04d.%s" % (basename, ext))
             # http://www.imagemagick.org/Usage/anim_basics/#coalesce
             child = pexpect.spawn("convert", ["-verbose",
-                                              self.get_filename(), 
-                                              "-coalesce", 
+                                              self.get_filename(),
+                                              "-coalesce",
                                               tmp_root])
 
             index = 0
@@ -62,8 +62,8 @@ class GIFFile(ImageFile):
 
         except pexpect.EOF:
             pass
-        except Exception, e:
-            print "Warning:", e
+        except Exception as e:
+            print("Warning:", e)
 
     def can_be_extracted(self):
         return True
@@ -75,7 +75,7 @@ class GIFGenerator:
                                               "-geometry", str(geometry),
                                               "-colors", str(colors),
                                               "-delay", str(delay)] +
-                                              files + 
+                                              files +
                                               [output])
             while True:
                 try:
@@ -85,8 +85,8 @@ class GIFGenerator:
                 yield None
         except pexpect.EOF:
             pass
-        except Exception, e:
-            print "Warning:", e
+        except Exception as e:
+            print("Warning:", e)
 
     def get_args(self):
         return [("Geometry", str, "geometry", "640x480"),

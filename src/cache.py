@@ -45,10 +45,10 @@ class Cache:
             # but it's not locked during the whole check-fail-generate-store cycle
             # since that would generate a big bottle neck and would prevent two
             # different threads from checking, generating and storing different items.
-            # To avoid working in the same item in parallel, additional locking in 
+            # To avoid working in the same item in parallel, additional locking in
             # the object is necessary
             if key in self.store:
-                print "Warning, duplicate entry for", key
+                print("Warning, duplicate entry for", key)
                 return
             self.__add_key(key)
             self.store[key] = value
@@ -86,7 +86,7 @@ class Cache:
             chained.invalidate(partial_key)
 
     def trace(self, *args):
-        if self.debug: print " ".join(map(str,args))
+        if self.debug: print(" ".join(map(str,args)))
 
 def cached(cache_=None, key_func=None):
     def func(method):
@@ -98,7 +98,7 @@ def cached(cache_=None, key_func=None):
                 cache = self.__cache__
             else:
                 cache = cache_
-    
+
             # build the key:
             if key_func:
                 key = key_func(self)
@@ -116,14 +116,14 @@ def cached(cache_=None, key_func=None):
                 key += args
                 key += tuple(kwargs.items())
 
-            # access/update the cache: 
+            # access/update the cache:
             # (this is NOT locked -see cache.__setitem__-)
             try:
                 return cache[key]
             except:
                 start = time.time()
                 value = method(self, *args, **kwargs)
-                cache.trace(key, "NOT found in the cache, value obtained in", 
+                cache.trace(key, "NOT found in the cache, value obtained in",
                             time.time() - start, "seconds")
                 cache[key] = value
                 return value

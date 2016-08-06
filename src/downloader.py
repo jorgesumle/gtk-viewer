@@ -24,11 +24,11 @@ class MultiDownloader:
                     data = response.read(bufsize)
                     while data:
                         read += len(data)
-                        yield ("Downloading %d/%d..." % (current, total), 
+                        yield ("Downloading %d/%d..." % (current, total),
                                (current-1 + float(read)/size) / (total))
                         output.write(data)
                         data = response.read(bufsize)
-            except Exception, e:
-                yield ("Error %d/%d: %s" % (current, total, e), 
+            except Exception as e:
+                yield ("Error %d/%d: %s" % (current, total, e),
                        float(current-1) / (total))
 

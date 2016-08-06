@@ -124,9 +124,9 @@ class File:
         name, sep, ext = self.get_basename().rpartition(".")
         if starred:
             new_name = name + self.star_marker
-        else: 
+        else:
             new_name = name.replace(self.star_marker, "")
-        self.rename(os.path.join(self.get_dirname(), 
+        self.rename(os.path.join(self.get_dirname(),
                                  string.join((new_name, ext), sep)))
 
     def extract_contents(self, tmp_dir, **kw_args):
@@ -161,8 +161,8 @@ class ImageFile(File):
     def get_pixbuf(self):
         try:
             return gtk.gdk.pixbuf_new_from_file(self.get_filename())
-        except Exception, e:
-            print "Warning:", e
+        except Exception as e:
+            print("Warning:", e)
             return self.get_empty_pixbuf()
 
     def toggle_flip(self, horizontal):
@@ -183,7 +183,7 @@ class ImageFile(File):
                            90: gtk.gdk.PIXBUF_ROTATE_CLOCKWISE,
                            180: gtk.gdk.PIXBUF_ROTATE_UPSIDEDOWN,
                            270: gtk.gdk.PIXBUF_ROTATE_COUNTERCLOCKWISE}
-    
+
         pixbuf = self.get_pixbuf()
         rotated = pixbuf.rotate_simple(angle_constants[self.get_rotation()])
         scaled = rotated.scale_simple(width, height, gtk.gdk.INTERP_BILINEAR)
@@ -193,7 +193,7 @@ class ImageFile(File):
         return flipped
 
     def get_dimensions(self):
-        width, height = (self.get_pixbuf().get_width(), 
+        width, height = (self.get_pixbuf().get_width(),
                          self.get_pixbuf().get_height())
 
         if self.get_rotation() in (90, 270):
@@ -219,10 +219,10 @@ class ImageFile(File):
         tags = {}
         try:
             image = PILImage.open(self.get_filename())
-            for tag, value in image._getexif().iteritems():
+            for tag, value in image._getexif().items():
                 decoded = PILExifTags.get(tag, tag)
                 tags[decoded] = value
-        except Exception, e:
+        except Exception as e:
             pass
         return tags
 
@@ -230,7 +230,7 @@ class ImageFile(File):
         tags = self.get_tags()
         if not tags:
             return None
-        return [("Tag", "Value")] + sorted(tags.iteritems())
+        return [("Tag", "Value")] + sorted(tags.items())
 
     def get_orientation(self):
         # Orientation constants taken from:
@@ -240,10 +240,10 @@ class ImageFile(File):
         return angle_constants.get(orientation, 0)
 
     def get_empty_pixbuf(self):
-        pixbuf = gtk.gdk.Pixbuf(colorspace=gtk.gdk.COLORSPACE_RGB, 
-                                has_alpha=False, 
-                                bits_per_sample=8, 
-                                width=1, 
+        pixbuf = gtk.gdk.Pixbuf(colorspace=gtk.gdk.COLORSPACE_RGB,
+                                has_alpha=False,
+                                bits_per_sample=8,
+                                width=1,
                                 height=1)
         pixbuf.fill(0)
         return pixbuf

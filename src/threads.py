@@ -14,7 +14,7 @@ def yield_processor():
 # The idea is to push a function and some parameters, and that function
 # will be executed in a separate thread. This function must NOT update
 # the UI directly, it must return another function with its own arguments
-# to be queued in the main thread's event loop with gobject.idle_add. 
+# to be queued in the main thread's event loop with gobject.idle_add.
 # (See http://faq.pygtk.org/index.py?file=faq20.006.htp&req=show)
 class Worker(Thread):
     def __init__(self):
@@ -45,8 +45,8 @@ class Worker(Thread):
             # the UI:
             if func:
                 gobject.idle_add(func, *args)
-        except Exception, e:
-            print "Warning:", e
+        except Exception as e:
+            print("Warning:", e)
 
     def stop(self):
         with self.cond:
@@ -75,14 +75,14 @@ class Updater(Thread):
         try:
             for progress in self.generator:
                 gobject.idle_add(self.on_progress, progress)
-                # give a chance to the main thread to update the 
+                # give a chance to the main thread to update the
                 # progressbar: (otherwise, if there are no IO
                 # operations while the generator is consumed,
-                # the main thread is never run and the UI just 
+                # the main thread is never run and the UI just
                 # blocks)
                 yield_processor()
-        except Exception, e:
-            print "Warning", e
+        except Exception as e:
+            print("Warning", e)
 
         # Execute the callback in the main thread (it's highly
         # probable that it will try to modify the UI). If we
@@ -90,7 +90,7 @@ class Updater(Thread):
         # SIGSEGVs may be generated
         gobject.idle_add(self.on_finish, *self.on_finish_args)
 
-        # Trick to "auto" dispose the thread: (if the on_finish 
+        # Trick to "auto" dispose the thread: (if the on_finish
         # callback tried to join this thread, it would deadlock)
         gobject.idle_add(lambda t: t.join(), self)
 
